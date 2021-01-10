@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import * as PIXI from 'pixi.js';
+import { Application, Loader, LoaderResource, Sprite } from 'pixi.js';
 
 import './style.css';
 import catPNG from './images/cat.png'
@@ -12,7 +12,7 @@ function component() {
     element.classList.add('hello');
 
     //Create a Pixi Application
-    let app = new PIXI.Application({ width: 256, height: 256 });
+    let app = new Application({ width: 256, height: 256 });
     app.renderer.backgroundColor = 0x061639;
 
     // Cause full screen
@@ -29,14 +29,26 @@ function component() {
         .add(catPNG)
         .load(setup);
 
+    let cat: Sprite;
+
     //This `setup` function will run when the image has loaded
     function setup() {
 
         //Create the cat sprite
-        let cat = new PIXI.Sprite(app.loader.resources[catPNG].texture);
+        cat = new Sprite(app.loader.resources[catPNG].texture);
+
+        cat.position.set(50, 60);
+        cat.rotation = Math.PI / 3;
+        cat.anchor.set(0.5, 0.5);
 
         //Add the cat to the stage
         app.stage.addChild(cat);
+
+        app.ticker.add(d => gameLoop(d))
+    }
+
+    function gameLoop(delta: number) {
+        cat.rotation += 0.01;
     }
 
     return element;
